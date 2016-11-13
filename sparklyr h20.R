@@ -6,7 +6,8 @@ library(dplyr)
 ## connect to spark - check if needed - two instances installed
 # Sys.setenv(SPARK_HOME = "/usr/local/src/Spark")
 # Sys.setenv(SPARK_HOME = "/home/rohit/.cache/spark")
-
+library(devtools)
+devtools::install_github("h2oai/sparkling-water", ref = "master", subdir = "/r/rsparkling",force=TRUE)
 # Sys.getenv("SPARK_HOME")
 
 # spark connection
@@ -26,7 +27,7 @@ partitions <- mtcars_tbl %>%
   mutate(cyl8 = cyl == 8) %>%
   sdf_partition(training = 0.5, test = 0.5, seed = 1099)
 
-training <- as_h2o_frame(partitions$training)
+training <- as_h2o_frame(sc,partitions$training)
 test <- as_h2o_frame(sc,partitions$test)
 
 # fit a linear model to the training dataset
