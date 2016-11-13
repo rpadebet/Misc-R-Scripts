@@ -1,3 +1,8 @@
+###############################################################
+## http://blog.h2o.ai/2016/06/h2o-gbm-tuning-tutorial-for-r/ ##
+###############################################################
+
+
 library(h2o)
 h2o.init(nthreads=-1)
 ## optional: connect to a running H2O cluster
@@ -50,3 +55,139 @@ gbm <- h2o.gbm(x = predictors, y = response,
 ## Show a detailed summary of the cross validation metrics
 ## This gives you an idea of the variance between the folds
 gbm@model$cross_validation_metrics_summary
+
+## Get the cross-validated AUC by scoring the combined holdout predictions.
+## (Instead of taking the average of the metrics across the folds)
+h2o.auc(h2o.performance(gbm, xval = TRUE))
+
+## TUNING parameters with early stopping
+gbm <- h2o.gbm(
+  ## standard model parameters
+  x = predictors, 
+  y = response, 
+  training_frame = train, 
+  validation_frame = valid,
+  
+  ## more trees is better if the learning rate is small enough 
+  ## here, use "more than enough" trees - we have early stopping
+  ntrees = 10000,                                                            
+  
+  ## smaller learning rate is better (this is a good value for most datasets, but see below for annealing)
+  learn_rate=0.01,                                                         
+  
+  ## early stopping once the validation AUC doesn't improve by at least 0.01% for 5 consecutive scoring events
+  stopping_rounds = 5, stopping_tolerance = 1e-4, stopping_metric = "AUC", 
+  
+  ## sample 80% of rows per tree
+  sample_rate = 0.8,                                                       
+
+  ## sample 80% of columns per split
+  col_sample_rate = 0.8,                                                   
+
+  ## fix a random number generator seed for reproducibility
+  seed = 1234,                                                             
+  
+  ## score every 10 trees to make early stopping reproducible (it depends on the scoring interval)
+  score_tree_interval = 10                                                 
+)
+
+## Get the AUC on the validation set (passed during training)
+h2o.auc(h2o.performance(gbm,valid = TRUE))
+
+## Hypersearch of parameters
+#' First trying to figure out the depth of the trees necessary
+#
+
+
+## Depth 10 is usually plenty of depth for most datasets, but you never know
+hyper_params = list( max_depth = seq(1,29,2) )
+#hyper_params = list( max_depth = c(4,6,8,12,16,20) ) ##faster for larger datasets
+
+grid <- h2o.grid(
+  ## hyper parameters
+  hyper_params = hyper_params,
+  
+  ## full Cartesian hyper-parameter search
+  search_criteria = list(strategy = "Cartesian"),
+  
+  ## which algorithm to run
+  algorithm="gbm",
+  
+  ## identifier for the grid, to later retrieve it
+  grid_id="depth_grid",
+  
+  ## standard model parameters
+  x = predictors, 
+  y = response, 
+  training_frame = train, 
+  validation_frame = valid,
+  
+  ## more trees is better if the learning rate is small enough 
+  ## here, use "more than enough" trees - we have early stopping
+  ntrees = 10000,                                                            
+  
+  ## smaller learning rate is better
+  ## since we have learning_rate_annealing, we can afford to start with a bigger learning rate
+  learn_rate = 0.05,                                                         
+  
+  ## learning rate annealing: learning_rate shrinks by 1% after every tree 
+  ## (use 1.00 to disable, but then lower the learning_rate)
+  learn_rate_annealing = 0.99,                                               
+  
+  ## sample 80% of rows per tree
+  sample_rate = 0.8,                                                       
+
+  ## sample 80% of columns per split
+  col_sample_rate = 0.8, 
+  
+  ## fix a random number generator seed for reproducibility
+  seed = 1234,                                                             
+  
+  ## early stopping once the validation AUC doesn't improve by at least 0.01% for 5 consecutive scoring events
+  stopping_rounds = 5,
+  stopping_tolerance = 1e-4,
+  stopping_metric = "AUC", 
+  
+  ## score every 10 trees to make early stopping reproducible (it depends on the scoring interval)
+  score_tree_interval = 10                                                
+)
+
+## by default, display the grid search results sorted by increasing logloss (since this is a classification task)
+grid 
+
+## sort the grid models by decreasing AUC
+sortedGrid <- h2o.getGrid("depth_grid", sort_by="auc", decreasing = TRUE)    
+sortedGrid
+
+## find the range of max_depth for the top 5 models
+topDepths = sortedGrid@summary_table$max_depth[1:5]                       
+minDepth = min(as.numeric(topDepths))
+maxDepth = max(as.numeric(topDepths))
+
+###Predicting
+gbm <- h2o.getModel(sortedGrid@model_ids[[1]])
+preds <- h2o.predict(gbm, test)
+head(preds)
+gbm@model$validation_metrics@metrics$max_criteria_and_metric_scores
+
+
+### Ensemble of gbm models
+prob = NULL
+k=10
+for (i in 1:k) {
+  gbm <- h2o.getModel(sortedGrid@model_ids[[i]])
+  if (is.null(prob)) prob = h2o.predict(gbm, test)$p1
+  else prob = prob + h2o.predict(gbm, test)$p1
+}
+prob <- prob/k
+head(prob)
+
+
+### Bringing it back to R local to calculate accuracy
+probInR  <- as.vector(prob)
+labelInR <- as.vector(as.numeric(test[[response]]))
+if (! ("cvAUC" %in% rownames(installed.packages()))) { install.packages("cvAUC") }
+library(cvAUC)
+cvAUC::AUC(probInR, labelInR)
+
+
