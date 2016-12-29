@@ -1,0 +1,31 @@
+## To start apache server: allow access from outside
+
+sudo service apache2 restart
+
+## To start RStudio server
+
+rstudio-server start
+
+## To start Spark
+spark-shell   ## scala version
+pyspark       ## python version
+sparkR        ## R version
+
+# access spark jobs at http://localhost:4040 
+
+## To start PostGreSQL
+psql
+
+\conninfo	# Gives connection info
+\c spam  	# to change the database
+\c rohit 	# to change the database
+\l 		# List of databases
+\dt		# list of tables in a database
+select * from iris;
+
+## To access gui
+http://localhost/phppgadmin/   
+
+
+  
+
