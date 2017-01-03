@@ -155,6 +155,7 @@ grid <- h2o.grid(
 ## by default, display the grid search results sorted by increasing logloss (since this is a classification task)
 grid 
 
+
 ## sort the grid models by decreasing AUC
 sortedGrid <- h2o.getGrid("depth_grid", sort_by="auc", decreasing = TRUE)    
 sortedGrid
