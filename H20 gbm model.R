@@ -99,6 +99,7 @@ h2o.auc(h2o.performance(gbm,valid = TRUE))
 #
 
 
+
 ## Depth 10 is usually plenty of depth for most datasets, but you never know
 hyper_params = list( max_depth = seq(1,29,2) )
 #hyper_params = list( max_depth = c(4,6,8,12,16,20) ) ##faster for larger datasets
@@ -173,6 +174,7 @@ gbm@model$validation_metrics@metrics$max_criteria_and_metric_scores
 
 
 ### Ensemble of gbm models
+
 prob = NULL
 k=10
 for (i in 1:k) {
