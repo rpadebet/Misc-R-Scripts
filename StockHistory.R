@@ -16,14 +16,30 @@ class(getSymbols('MSFT',src='yahoo'))
 
 str(MSFT$MSFT)
 
-BRK<-get(getSymbols('BRK-B',src='yahoo'))
+JPM<-get(getSymbols('JPM',src='yahoo'))
 
-BRK.data<-as.data.frame(BRK)
-head(BRK.data)
-str(BRK.data)
+JPM.data<-as.data.frame(JPM)
+head(JPM.data)
+str(JPM.data)
 
-BRK.data$Date<-index(BRK)
 
-dbWriteTable(conn,"StockHistory",BRK.data, row.names=FALSE)
-stkpx = dbGetQuery(conn, " Select * from \"StockHistory\" where \"Date\">'01-01-2017'")
 
+nrow(JPM.data)
+JPM.data$Date<-index(JPM)
+JPM.data$Ticker<-rep("JPM",times=nrow(JPM.data))
+colnames(JPM.data)<-c("OPEN","HIGH","LOW","CLOSE","VOLUME","ADJUSTED.CLOSE","DATE","TICKER")
+
+dbWriteTable(conn,'Stocks',JPM.data, row.names=FALSE)
+
+Stkpx = dbGetQuery(conn, " SELECT * FROM \"Stocks\" where \"Date\">'01-01-2017'")
+head(Stkpx)
+
+
+MSFT<-get(getSymbols('MSFT',src='yahoo'))
+MSFT.data<-as.data.frame(MSFT)
+MSFT.data$Date<-index(MSFT)
+MSFT.data$Ticker<-rep("MSFT",times=nrow(MSFT.data))
+colnames(MSFT.data)<-c("OPEN","HIGH","LOW","CLOSE","VOLUME","ADJUSTED.CLOSE","DATE","TICKER")
+
+dbWriteTable(conn,'Stocks',MSFT.data, row.names=FALSE,append=TRUE)
+## Doesnt work because table already exists when append=TRUE not specified
