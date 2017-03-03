@@ -1,7 +1,7 @@
 ## Using Caret Package on Loan Prediction Problem
 
     library(caret)
-    library()
+    
 
 ## Downloading Data
 
@@ -85,7 +85,7 @@
     
     ## Model initialization
     model_gbm<-train(trainSet[,predictors],trainSet[,outcomeName],method='gbm')
-    model_gbm_h2o<-train(trainSet[,predictors],trainSet[,outcomeName],method='gbm_h2o')
+    model_gbm_h2o<-train(trainSet[,predictors],trainSet[,outcomeName],method='xgbTree')
     model_rf<-train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
     model_nnet<-train(trainSet[,predictors],trainSet[,outcomeName],method='nnet')
     model_glm<-train(trainSet[,predictors],trainSet[,outcomeName],method='glmboost')

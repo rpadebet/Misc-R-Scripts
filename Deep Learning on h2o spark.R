@@ -13,7 +13,10 @@ head(prostate_df)
 #' we’ll get a reference to it as an h2o frame then 
 #' split it into training and test sets using the h2o.splitFrame function:
   
-prostate_hf <- as_h2o_frame(sc, prostate_df,strict_version_check = F)
+# prostate_hf <- as_h2o_frame(sc, prostate_df,strict_version_check = F)
+library(h2o)
+h2o.init()
+prostate_hf<-as.h2o(prostate_df)
 splits <- h2o.splitFrame(prostate_hf, seed = 1)
 
 
@@ -29,7 +32,7 @@ x <- setdiff(names(prostate_hf), c("ID", y))
 dl_fit <- h2o.deeplearning(x = x, y = y,
                            training_frame = splits[[1]],
                            epochs = 15,
-                           activation = "Rectifier",
+                           activation = "Maxout",
                            hidden = c(10, 5, 10),
                            input_dropout_ratio = 0.7)
 
