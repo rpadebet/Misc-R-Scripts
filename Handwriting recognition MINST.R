@@ -4,7 +4,7 @@ library(data.table)
 h2o.init(port = 54321,nthreads = -1)
 
 #' Download MINST Data files
-#' 
+#'
 #' CSV training set http://www.pjreddie.com/media/files/mnist_train.csv
 #' CSV test set http://www.pjreddie.com/media/files/mnist_test.csv
 
@@ -51,7 +51,7 @@ model
 h2o.performance(model)
 
 # Variable Importance
-model2 <- 
+model2 <-
   h2o.deeplearning(x = 2:785,  # column numbers for predictors
                    y = 1,   # column number for label
                    training_frame  = train_h2o, # data in H2O format
