@@ -7,11 +7,11 @@
 library(h2o)
 library(sparklyr)
 
-Sys.getenv("SPARK_HOME")
 
 # Mac
-Sys.setenv(SPARK_HOME = "/Users/rohitpittu/spark/spark-2.1.0-bin-hadoop2.7")
+# Sys.setenv(SPARK_HOME = "/Users/rohitpittu/spark/spark-2.1.0-bin-hadoop2.7")
 Sys.setenv(SPARK_HOME = paste0(spark_install_dir(),"/spark-2.0.0-bin-hadoop2.7"))
+Sys.getenv("SPARK_HOME")
 
 # spark connection
 sc <- spark_connect(master = 'local',version="2.1.0")
