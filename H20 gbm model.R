@@ -9,7 +9,7 @@ h2o.init(nthreads=-1)
 #h2o.init(ip="mycluster", port=55555) 
 
 ## 'path' can point to a local file, hdfs, s3, nfs, Hive, directories, etc.
-df <- h2o.importFile(path = "http://s3.amazonaws.com/h2o-public-test-data/smalldata/gbm_test/titanic.csv")
+df <- h2o.importFile(path = "http://s3.amazonaws.com/h2o-public-test-data/smalldata/gbm_test/titanic.csv",)
 dim(df)
 head(df)
 tail(df)
