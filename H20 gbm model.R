@@ -194,3 +194,13 @@ library(cvAUC)
 cvAUC::AUC(probInR, labelInR)
 
 
+
+packages<-c("h2o","caret","RPostgreSQL","data.table","quantmod","rJava","RWeka","DBI"
+            ,"devtools","e1071","git2r","gbm","Hmisc","haven","httr","IBrokers","IRkernel",
+            "xlsx","curl","openssl","XLConnect","RHadoop","xts","zoo","RODBC","glmnet",
+            "jsonlite","randomForest","RColorBrewer","readr","ROCR","rvest","shiny","spam",
+            "xml2","xtable","rpart","nnet","tm", "SnowballCC","wordcloud","igraph","ngram",
+            "textmineR","ada","adabag","C50","foreign","gridExtra","jpeg","lda","MASS",
+            "Matrix","ModelMetrics","NLP","plotly","ProjectTemplate","rmarkdown","sparklyr",
+            "rsparkling","sqldf","swirl","xgboost")
+

@@ -42,4 +42,4 @@ MSFT.data$Ticker<-rep("MSFT",times=nrow(MSFT.data))
 colnames(MSFT.data)<-c("OPEN","HIGH","LOW","CLOSE","VOLUME","ADJUSTED.CLOSE","DATE","TICKER")
 
 dbWriteTable(conn,'Stocks',MSFT.data, row.names=FALSE,append=TRUE)
-## Doesnt work because table already exists when append=TRUE not specified
+## Doesnt work because table already exists

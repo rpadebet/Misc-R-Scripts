@@ -19,7 +19,7 @@ Sys.setenv(SPARK_HOME = "/home/rohit/spark/spark")
 repos <- c("https://h2o-release.s3.amazonaws.com/h2o/rel-turing/9/R", getOption("repos"))
 
 # spark connection
-sc <- spark_connect(master = "local")
+sc <- spark_connect(master = "local",version = "2.")
 
 # copy mtcars dataset into spark
 mtcars_tbl <- copy_to(sc, mtcars, "mtcars", overwrite = TRUE)
