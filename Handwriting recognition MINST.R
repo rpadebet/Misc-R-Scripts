@@ -79,3 +79,4 @@ model2@parameters
 
 ## Using the DNN model for predictions
 h2o_yhat_test <- h2o.predict(model2, test_h2o)
+

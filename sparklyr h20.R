@@ -27,7 +27,11 @@ Sys.setenv(SPARK_HOME = paste0(spark_install_dir(),"/spark-2.0.0-bin-hadoop2.7")
 repos <- c("https://h2o-release.s3.amazonaws.com/h2o/rel-turing/9/R", getOption("repos"))
 
 # spark connection
+
+
+
 sc <- spark_connect(master = 'local',version="2.0.0")
+
 
 # copy mtcars dataset into spark
 mtcars_tbl <- copy_to(sc, mtcars, "mtcars", overwrite = TRUE)
@@ -110,6 +114,8 @@ ggplot(data, aes(x = actual, y = predicted)) +
 
 
 
+
+
 ## Reading and Writing Files
 temp_csv <- tempfile(fileext = ".csv")
 temp_parquet <- tempfile(fileext = ".parquet")
@@ -127,3 +133,4 @@ spark_write_json(iris_tbl, temp_json)
 iris_json_tbl <- spark_read_json(sc, "iris_json", temp_json)
 
 src_tbls(sc)
+
