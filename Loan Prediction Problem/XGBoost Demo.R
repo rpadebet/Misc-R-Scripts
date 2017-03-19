@@ -22,8 +22,8 @@ fitControl <- trainControl(
     summaryFunction = twoClassSummary)
 
 # Search Grid
-grid <- expand.grid(nrounds=c(50,200),
-                    max_depth=c(1,2),
+grid <- expand.grid(nrounds=c(200,250,300),
+                    max_depth=c(3,4,5,6),
                     eta=c(0.1,0.01),
                     gamma=0,
                     min_child_weight =2,
@@ -49,12 +49,12 @@ plot(varImp(object=model_xgb),main="XGB Boosting - Variable Importance")
 # on Train Set
 predictions<-predict(model_xgb,data.matrix(trainSet[,predictors]),type="raw")
 table(predictions)
-confusionMatrix(predictions,trainSet[,outcomeName]) 
+confusionMatrix(predictions,trainSet[,outcomeName])
 
 # on Test Set
 predictions<-predict(model_xgb,data.matrix(testSet[,predictors]),type="raw")
 table(predictions)
-confusionMatrix(predictions,testSet[,outcomeName]) 
+confusionMatrix(predictions,testSet[,outcomeName])
 
 
 

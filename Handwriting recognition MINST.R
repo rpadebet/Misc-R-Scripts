@@ -4,7 +4,7 @@ library(data.table)
 h2o.init(port = 54321,nthreads = -1)
 
 #' Download MINST Data files
-#' 
+#'
 #' CSV training set http://www.pjreddie.com/media/files/mnist_train.csv
 #' CSV test set http://www.pjreddie.com/media/files/mnist_test.csv
 
@@ -16,12 +16,12 @@ download.file("http://www.pjreddie.com/media/files/mnist_test.csv",
               "~/Downloads/MINST/test.csv")
 
 # Reading files into local memory
-train<-fread(input = "~/Downloads/MINST/train.csv")
-test<-fread(input = "~/Downloads/MINST/test.csv")
+train<-fread(input = "~/Downloads/mnist_train.csv")
+test<-fread(input = "~/Downloads/mnist_test.csv")
 
 # Reading files in H2O
-train_h2o<-h2o.importFile("/home/rohit/Downloads/MINST/train.csv")
-test_h2o<-h2o.importFile("/home/rohit/Downloads/MINST/test.csv")
+train_h2o<-h2o.importFile("/Users/rohitpittu/Downloads/mnist_train.csv")
+test_h2o<-h2o.importFile("/Users/rohitpittu/Downloads/mnist_test.csv")
 # Deep neural network model
 
 model <- h2o.deeplearning(x = 2:785,  # column numbers for predictors
@@ -51,7 +51,7 @@ model
 h2o.performance(model)
 
 # Variable Importance
-model2 <- 
+model2 <-
   h2o.deeplearning(x = 2:785,  # column numbers for predictors
                    y = 1,   # column number for label
                    training_frame  = train_h2o, # data in H2O format
