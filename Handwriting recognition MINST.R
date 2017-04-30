@@ -16,13 +16,38 @@ download.file("http://www.pjreddie.com/media/files/mnist_test.csv",
               "~/Downloads/MINST/test.csv")
 
 # Reading files into local memory
-train<-fread(input = "~/Downloads/mnist_train.csv")
-test<-fread(input = "~/Downloads/mnist_test.csv")
+train<-fread(input = "~/Downloads/MINST/train.csv")
+test<-fread(input = "~/Downloads/MINST/test.csv")
+
+
+# Plotting the images
+# Create a 28*28 matrix with pixel color values
+m = matrix(unlist(train[10,-1]), nrow = 28, byrow = TRUE)
+
+# Plot that matrix
+image(m,col=grey.colors(255))
+
+# reverses (rotates the matrix)
+rotate <- function(x) t(apply(x, 2, rev)) 
+
+# Plot some of images
+par(mfrow=c(2,3))
+lapply(1:6, 
+       function(x) image(
+         rotate(matrix(unlist(train[x,-1]),nrow = 28, byrow = TRUE)),
+         col=grey.colors(255),
+         xlab=train[x,1]
+       )
+)
+
+par(mfrow=c(1,1)) # set plot options back to default
 
 # Reading files in H2O
-train_h2o<-h2o.importFile("/Users/rohitpittu/Downloads/mnist_train.csv")
-test_h2o<-h2o.importFile("/Users/rohitpittu/Downloads/mnist_test.csv")
+train_h2o<-h2o.importFile("../../../Downloads/MINST/train.csv")
+test_h2o<-h2o.importFile("../../../Downloads/MINST/test.csv")
 # Deep neural network model
+
+train_h2o[,1]<-as.factor(train_h2o[,1])
 
 model <- h2o.deeplearning(x = 2:785,  # column numbers for predictors
                    y = 1,   # column number for label
@@ -31,6 +56,7 @@ model <- h2o.deeplearning(x = 2:785,  # column numbers for predictors
                    input_dropout_ratio = 0.2, # % of inputs dropout
                    hidden_dropout_ratios = c(0.5,0.5,0.5), # % for nodes dropout
                    hidden = c(50,50,50), # three layers of 50 nodes
+                   variable_importances = TRUE, # variable importance
                    epochs = 100) # max. no. of epochs
 
 
@@ -39,6 +65,18 @@ h2o_yhat_test <- h2o.predict(model, test_h2o)
 
 ## Converting H2O format into data frame
 df_yhat_test <- as.data.frame(h2o_yhat_test)
+
+## Test labels
+test_labels<-as.factor(unlist(test[,1]))
+
+## Table of predictions
+table(test_labels,df_yhat_test[,1])
+
+## Accuracy of predictions
+Acc<-sum(diag(table(test_labels,df_yhat_test[,1])))/nrow(test)
+print(paste0("Accuracy = ",Acc*100,"%"))
+
+
 
 # View the specified parameters of your deep learning model
 
@@ -79,4 +117,6 @@ model2@parameters
 
 ## Using the DNN model for predictions
 h2o_yhat_test <- h2o.predict(model2, test_h2o)
+
+
 
