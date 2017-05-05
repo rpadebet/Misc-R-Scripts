@@ -15,6 +15,8 @@ Sys.getenv("SPARK_HOME")
 
 # Lubuntu
 Sys.setenv(SPARK_HOME = "/home/rohit/spark/spark")
+# AWS
+Sys.setenv(SPARK_HOME = "/home/rstudio/spark-2.0.2-bin-hadoop2.7")
 # Mac
 Sys.setenv(SPARK_HOME = "/Users/rohitpittu/spark/spark-2.1.0-bin-hadoop2.7")
 
@@ -29,8 +31,11 @@ repos <- c("https://h2o-release.s3.amazonaws.com/h2o/rel-turing/9/R", getOption(
 # spark connection
 
 
+## connect to local
+sc <- spark_connect(master = 'local',version="2.0.2")
 
-sc <- spark_connect(master = 'local',version="2.0.0")
+## connect to cluster
+sc <- spark_connect(master = 'spark://172.31.23.156:7077',version="2.0.2",hadoop_version = "2.7")
 
 
 # copy mtcars dataset into spark
