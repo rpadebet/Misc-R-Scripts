@@ -26,6 +26,8 @@ select * from iris;
 ## To access gui
 http://localhost/phppgadmin/   
 
-
+# to start Zeppelin
+cd zeppelin-0.7.2-bin-all/bin
+./zeppelin-daemon.sh start
   
 
