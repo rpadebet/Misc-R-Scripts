@@ -15,8 +15,6 @@ Sys.getenv("SPARK_HOME")
 
 # Lubuntu
 Sys.setenv(SPARK_HOME = "/home/rohit/spark/spark")
-# AWS
-Sys.setenv(SPARK_HOME = "/home/rstudio/spark-2.0.2-bin-hadoop2.7")
 # Mac
 Sys.setenv(SPARK_HOME = "/Users/rohitpittu/spark/spark-2.1.0-bin-hadoop2.7")
 
@@ -29,19 +27,11 @@ Sys.setenv(SPARK_HOME = paste0(spark_install_dir(),"/spark-2.0.0-bin-hadoop2.7")
 repos <- c("https://h2o-release.s3.amazonaws.com/h2o/rel-turing/9/R", getOption("repos"))
 
 # spark connection
-
-
-## connect to local
-sc <- spark_connect(master = 'local',version="2.0.2")
-
 <<<<<<< HEAD
-#sc <- spark_connect(master = 'local',version="2.0.0")
-sc <- spark_connect(master = 'local')
+sc <- spark_connect(master = "local",version = "2.")
 =======
-## connect to cluster
-sc <- spark_connect(master = 'spark://172.31.23.156:7077',version="2.0.2",hadoop_version = "2.7")
-
->>>>>>> 3aca6cc1b382c089a61a4ba1fb88e34f7230eb8a
+sc <- spark_connect(master = 'local',version="2.0.0")
+>>>>>>> 88d0a4c54a1cac2de310a4d8e7a95992d268f525
 
 # copy mtcars dataset into spark
 mtcars_tbl <- copy_to(sc, mtcars, "mtcars", overwrite = TRUE)
@@ -119,8 +109,8 @@ ggplot(data, aes(x = actual, y = predicted)) +
     y = "Predicted Fuel Consumption",
     title = "Predicted vs. Actual Fuel Consumption"
   )
-
-
+<<<<<<< HEAD
+=======
 
 
 
@@ -143,4 +133,4 @@ spark_write_json(iris_tbl, temp_json)
 iris_json_tbl <- spark_read_json(sc, "iris_json", temp_json)
 
 src_tbls(sc)
-
+>>>>>>> 88d0a4c54a1cac2de310a4d8e7a95992d268f525

@@ -43,8 +43,8 @@ lapply(1:6,
 par(mfrow=c(1,1)) # set plot options back to default
 
 # Reading files in H2O
-train_h2o<-h2o.importFile("../../../Downloads/MINST/train.csv")
-test_h2o<-h2o.importFile("../../../Downloads/MINST/test.csv")
+train_h2o<-h2o.importFile("Downloads/MINST/train.csv")
+test_h2o<-h2o.importFile("Downloads/MINST/test.csv")
 # Deep neural network model
 
 train_h2o[,1]<-as.factor(train_h2o[,1])
@@ -117,6 +117,26 @@ model2@parameters
 
 ## Using the DNN model for predictions
 h2o_yhat_test <- h2o.predict(model2, test_h2o)
+
+
+## Classifying using someother model
+
+library(caret)
+
+inTrain = data.frame(y=as.factor(unlist(train[,1])), train[,-1])
+inTest = data.frame(y=as.factor(unlist(test[,1])), test[,-1])
+inTrain$y <- as.factor(inTrain$y)
+trainIndex = createDataPartition(inTrain$y, p = 0.60,list=FALSE)
+training = inTrain[trainIndex,]
+cv = inTrain[-trainIndex,]
+
+# SVM. 95/94.
+fit <- train(y ~ ., 
+             data = head(training, 1000),
+             method = 'svmRadial', 
+             tuneGrid = data.frame(sigma=0.0107249, C=1))
+results <- predict(fit, newdata = head(cv, 1000))
+confusionMatrix(results, head(cv$y, 1000))
 
 
 
