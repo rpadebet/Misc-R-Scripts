@@ -17,3 +17,25 @@ library(quantmod)
 class(getSymbols('MSFT',src='yahoo'))
 
 str(MSFT$MSFT)
+
+library(RMySQL)
+
+drv2<- dbDriver("MySQL")
+conn2<-dbConnect(drv2,
+                 dbname="awsMySQLdb",
+                 host="myawsdb.cmftapsh8tgl.us-east-1.rds.amazonaws.com",
+                 port=3306,
+                 user="rohit_aws",
+                 password="rohit123")
+
+
+
+dbListTables(conn2)
+
+MSFTfile<-dbGetQuery(conn2,"Select * from MSFT")
+
+library(readr)
+
+write_csv(MSFTfile,"MSFT.csv")
+
+list.files()
