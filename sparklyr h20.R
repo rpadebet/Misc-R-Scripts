@@ -30,8 +30,8 @@ repos <- c("https://h2o-release.s3.amazonaws.com/h2o/rel-turing/9/R", getOption(
 
 
 
-sc <- spark_connect(master = 'local',version="2.0.0")
-
+#sc <- spark_connect(master = 'local',version="2.0.0")
+sc <- spark_connect(master = 'local')
 
 # copy mtcars dataset into spark
 mtcars_tbl <- copy_to(sc, mtcars, "mtcars", overwrite = TRUE)
