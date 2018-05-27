@@ -16,11 +16,11 @@ ddf <- ddf[,6]
 pb <- txtProgressBar(min = 0, max = length(stocklist) - 1, style=3)
 
 for(i in stocklist[-1]){
-  df <- getSymbols(Symbols = i, auto.assign = F)  
+  df <- getSymbols(Symbols = i, auto.assign = F)
   df <- df[,6]
-  
+
   ddf <- merge(ddf, df)
-  
+
   setTxtProgressBar(pb, which(stocklist[-1] == i))
 }
 
@@ -32,7 +32,7 @@ prices <- melt(prices, id.vars = "Month")
 # Calculate returns
 CalcRet <- function(x, vec = F){
   ret <- (x[2:length(x)] - x[1:(length(x) - 1)]) / x[1:(length(x) - 1)]
-  
+
   if(vec == T) {
     return(ret)
   }else{
@@ -40,16 +40,16 @@ CalcRet <- function(x, vec = F){
   }
 }
 
-returns <- prices %>% 
-  group_by(Month, variable) %>% 
+returns <- prices %>%
+  group_by(Month, variable) %>%
   summarize(Return = CalcRet(value))
 
 returns <- data.frame(returns, VAR = "Returns")
 names(returns) <- c("Period", "Stock", "Value", "Variable")
 
 # Calculate volatility
-volatility <- prices %>% 
-  group_by(Month, variable) %>% 
+volatility <- prices %>%
+  group_by(Month, variable) %>%
   summarize(Volatility = sd(CalcRet(value, vec = T)))
 
 volatility <- data.frame(volatility, VAR = "Volatility")
@@ -60,12 +60,18 @@ plot.df <- rbind(returns, volatility)
 plot.df <- dcast(plot.df, Period + Stock ~ Variable, value.var = "Value")
 plot.df$Year <- format(plot.df[,1], "%Y")
 
-p <- plot_ly(plot.df, x = ~Volatility, y = ~Returns) %>% 
+plot.tbl<-as.tbl(plot.df)
+
+p <- plot_ly(plot.tbl, x = ~Volatility, y = ~Returns,color = ~Stock) %>%
   add_markers(color = ~Stock, size = ~(Returns / Volatility),
               frame = ~Year,
-              marker = list(opacity = 0.6, line = list(width = 1, color = "black"))) %>% 
+              marker = list(opacity = 0.6, line = list(width = 1, color = "black"))) %>%
   layout(title = "Monthly Return vs Volatility over last 10 years <br> for 50 US stocks over time",
-         showlegend = F, 
+         showlegend = F,
          plot_bgcolor = "#e6e6e6",
-         paper_bgcolor = "#e6e6e6") %>% 
-  animation_opts(frame = 1000)
+         paper_bgcolor = "#e6e6e6",
+         xaxis= list(title= "Monthly Volatility", family = "Old Standard TT, serif", color="blue" )) %>%
+    animation_opts(frame = 1000)
+p
+
+

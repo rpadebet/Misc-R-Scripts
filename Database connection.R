@@ -39,3 +39,13 @@ library(readr)
 write_csv(MSFTfile,"MSFT.csv")
 
 list.files()
+
+roth_prices<-read.csv("~/R Projects/Prices.csv",header=T)
+str(roth_prices)
+dbWriteTable(conn2,"RothPrices",roth_prices)
+
+library(tidyquant)
+
+x <- tidyquant::tq_get(x='IBM')
+
+
