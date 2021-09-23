@@ -1,4 +1,4 @@
-##Begin
+##Begin Script
 
 ## To start apache server: allow access from outside
 
